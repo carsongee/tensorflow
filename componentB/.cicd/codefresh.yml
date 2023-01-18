@@ -2,8 +2,10 @@
 # https://codefresh.io/docs/docs/yaml-examples/examples/
 
 version: "1.0"
+kind: pipeline
 metadata:
   name: tensorflow/componentB
+  project: tensorflow
 
 # Stages can help you organize your steps in stages
 stages:
