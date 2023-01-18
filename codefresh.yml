@@ -23,6 +23,7 @@ steps:
   create_component_pipeline_a:
     title: "Make ComponentA pipeline"
     type: pipeline-trigger-merge
+    working_directory: "${{clone}}"
     stage: "plan"
     arguments:
       SPEC: componentA/.cicd/codefresh.yml
@@ -30,6 +31,7 @@ steps:
   create_component_pipeline_b:
     title: "Make ComponentB pipeline"
     type: pipeline-trigger-merge
+    working_directory: "${{clone}}"
     stage: "plan"
     arguments:
       SPEC: componentB/.cicd/codefresh.yml
@@ -39,7 +41,7 @@ steps:
     title: Start pipelines and wait
     type: codefresh-run-dynamic
     stage: fanout
-    working_dir: "${{clone}}"
+    working_directory: "${{clone}}"
     arguments:
       RUN_LIST_YAML_FILE: .cicd/pipelines.yml
       WAIT: true
