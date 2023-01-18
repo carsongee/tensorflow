@@ -39,6 +39,7 @@ steps:
     title: Start pipelines and wait
     type: codefresh-run-dynamic
     stage: fanout
+    working_dir: "${{clone}}"
     arguments:
       RUN_LIST_YAML_FILE: .cicd/pipelines.yml
       WAIT: true
