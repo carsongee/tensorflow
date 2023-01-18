@@ -1,6 +1,6 @@
 spec:
   triggers:
-    - name: componentA
+    - name: tensorflow/componentA
       type: git
       repo: carsongee/tensorflow
       events:
