@@ -26,16 +26,14 @@ steps:
     stage: "plan"
     arguments:
       SPEC: componentA/.cicd/codefresh.yml
-      ONLY_CHANGED: true
-      TRIGGERS: componentA/.cicd/codefresh.yml
+      TRIGGERS: componentA/.cicd/trigger.yml
   create_component_pipeline_b:
     title: "Make ComponentB pipeline"
     type: pipeline-trigger-merge
     stage: "plan"
     arguments:
       SPEC: componentB/.cicd/codefresh.yml
-      ONLY_CHANGED: true
-      TRIGGERS: componentB/.cicd/codefresh.yml
+      TRIGGERS: componentB/.cicd/trigger.yml
   # TODO: Generate pipelines to run
   run_cf_pipelines:
     title: Start pipelines and wait
