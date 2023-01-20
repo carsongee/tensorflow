@@ -4,12 +4,12 @@ spec:
       type: git
       repo: carsongee/tensorflow
       events:
-        - pullrequest.commentAdded
+        - push.heads
       commentRegex: /.*cf test componentA.*/gi
       provider: github
       branchRegex: /^((master|develop)$).*/gi
       branchRegexInput: regex
-      disabled: false
+      disabled: true
       options:
         noCache: false
         noCfCache: false
