@@ -36,6 +36,16 @@ steps:
     arguments:
       SPEC: componentB/.cicd/codefresh.yml
       TRIGGERS: componentB/.cicd/trigger.yml
+
+  render_component_pipelines:
+    title: Render yaml suitable for triggering pipelines
+    type: datarobot/cg-component-pipelines
+    stage: "plan"
+    arguments:
+      COMPONENT_PIPELINES: tensorflow/componentA tensorflow/componentB
+      DESTINATION: ${{CF_VOLUME_PATH}}/pipelines.yaml
+      DEBUG: true
+
   # TODO: Generate pipelines to run
   run_cf_pipelines:
     title: Start pipelines and wait
@@ -43,7 +53,7 @@ steps:
     stage: fanout
     working_directory: "${{clone}}"
     arguments:
-      RUN_LIST_YAML_FILE: .cicd/pipelines.yml
+      RUN_LIST_YAML_FILE: ${{CF_VOLUME_PATH}}/pipelines.yaml
       WAIT: true
 
   evaluate_pipelines:

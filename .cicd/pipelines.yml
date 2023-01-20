@@ -1,8 +1,0 @@
-- pipeline_id: tensorflow/componentA
-  trigger_id: tensorflow/componentA
-  branch: ${{CF_BRANCH}}
-  sha: ${{CF_REVISION}}
-- pipeline_id: tensorflow/componentB
-  trigger_id: tensorflow/componentB
-  branch: ${{CF_BRANCH}}
-  sha: ${{CF_REVISION}}
