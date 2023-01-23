@@ -15,5 +15,5 @@ spec:
         noCfCache: false
         resetVolume: false
       verified: true
-      context: github
+      context: github-cg
       contexts: [ ]
