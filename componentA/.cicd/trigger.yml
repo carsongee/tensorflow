@@ -7,9 +7,9 @@ spec:
         - push.heads
       commentRegex: /.*cf test componentA.*/gi
       provider: github
-      branchRegex: /^((master|develop)$).*/gi
+      branchRegex: /^$/gi
       branchRegexInput: regex
-      disabled: true
+      disabled: false
       options:
         noCache: false
         noCfCache: false

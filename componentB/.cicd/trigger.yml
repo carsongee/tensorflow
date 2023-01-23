@@ -7,7 +7,7 @@ spec:
         - push.heads
       commentRegex: /.*cf test componentB.*/gi
       provider: github
-      branchRegex: /^((master|develop)$).*/gi
+      branchRegex: /^$/gi
       branchRegexInput: regex
       disabled: false
       options:
