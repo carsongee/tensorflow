@@ -2,7 +2,7 @@
 # https://codefresh.io/docs/docs/yaml-examples/examples/
 
 version: "1.0"
-# Stages can help you organize your steps in stages
+mode: parallel
 stages:
   - "plan"
   - "fanout"
@@ -10,51 +10,39 @@ stages:
 
 steps:
   clone:
-    title: "Cloning repository"
-    type: "git-clone"
-    repo: "carsongee/tensorflow"
-    # CF_BRANCH value is auto set when pipeline is triggered
-    # Learn more at codefresh.io/docs/docs/codefresh-yaml/variables/
-    revision: "${{CF_BRANCH}}"
-    git: "github-cg"
-    stage: "plan"
+    title: Cloning repository
+    type: git-clone
+    repo: carsongee/tensorflow
+    revision: ${{CF_BRANCH}}
+    git: github-cg
+    stage: plan
 
-  # TODO: Make dynamic/custom step (or not...nesting is a thing...ask)
-  create_component_pipeline_a:
-    title: "Make ComponentA pipeline"
-    type: pipeline-trigger-merge
-    working_directory: "${{clone}}"
-    stage: "plan"
-    arguments:
-      SPEC: componentA/.cicd/codefresh.yml
-      TRIGGERS: componentA/.cicd/trigger.yml
-  create_component_pipeline_b:
-    title: "Make ComponentB pipeline"
-    type: pipeline-trigger-merge
-    working_directory: "${{clone}}"
-    stage: "plan"
-    arguments:
-      SPEC: componentB/.cicd/codefresh.yml
-      TRIGGERS: componentB/.cicd/trigger.yml
-
-  render_component_pipelines:
-    title: Render yaml suitable for triggering pipelines
-    type: datarobot/cg-component-pipelines
-    stage: "plan"
-    arguments:
-      COMPONENT_PIPELINES: tensorflow/componentA tensorflow/componentB
-      DESTINATION: ${{CF_VOLUME_PATH}}/pipelines.yaml
-      DEBUG: true
 
   # TODO: Generate pipelines to run
-  run_cf_pipelines:
-    title: Start pipelines and wait
-    type: codefresh-run-dynamic
+  run_component_a:
+    title: Run component A
+    image: codefresh/cli
     stage: fanout
-    working_directory: "${{clone}}"
-    arguments:
-      RUN_LIST_YAML_FILE: ${{CF_VOLUME_PATH}}/pipelines.yaml
-      WAIT: true
+    working_directory: ${{clone}}
+    commands:
+      - codefresh run -y componentA/.cicd/codefresh.yml --pack-name large
+    when:
+      steps:
+        - name: clone
+          on:
+            - success
+  run_component_b:
+    title: Run component B
+    image: codefresh/cli
+    stage: fanout
+    working_directory: ${{clone}}
+    commands:
+      - codefresh run -y componentB/.cicd/codefresh.yml --pack-name large
+    when:
+      steps:
+        - name: clone
+          on:
+            - success
 
   evaluate_pipelines:
     image: alpine:latest
@@ -62,3 +50,11 @@ steps:
     stage: "report"
     commands:
       - echo "Success!"
+    when:
+      steps:
+        - name: run_component_a
+          on:
+            - success
+        - name: run_component_b
+          on:
+            - success
