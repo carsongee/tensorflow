@@ -27,7 +27,7 @@ pipeline:
                     connectorRef: drcicd
                     region: us-east-1
                     account: "502474778139"
-                    imageName: harness/carsongee/tensorflow
+                    imageName: harness/carsongee/tensorflow/component
                     tags:
                       - <+pipeline.sequenceId>
                     dockerfile: component/Dockerfile
@@ -51,7 +51,7 @@ pipeline:
               type: Service
               spec:
                 connectorRef: drcicd
-                image: harness/carsongee/tensorflow/component:<+pipeline.sequenceId>
+                image: 502474778139.dkr.ecr.us-east-1.amazonaws.com/harness/carsongee/tensorflow/component:<+pipeline.sequenceId>
           execution:
             steps:
               - step:
