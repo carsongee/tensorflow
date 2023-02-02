@@ -26,7 +26,7 @@ pipeline:
                   spec:
                     connectorRef: drcicd
                     region: us-east1
-                    account: AKIAXJ7OUUYN4XFX3LGA
+                    account: "502474778139"
                     imageName: harness/carsongee/tensorflow
                     tags:
                       - <+pipeline.sequenceId>
