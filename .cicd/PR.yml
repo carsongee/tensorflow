@@ -30,7 +30,8 @@ pipeline:
                     imageName: harness/carsongee/tensorflow
                     tags:
                       - <+pipeline.sequenceId>
-                    dockerfile: component/Dockerfile
+                    dockerfile: Dockerfile
+                    context: component/
           platform:
             os: Linux
             arch: Amd64
