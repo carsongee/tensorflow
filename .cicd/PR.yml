@@ -47,11 +47,11 @@ pipeline:
           cloneCodebase: true
           serviceDependencies:
             - identifier: Main_Image
-              name: Main Image
+              name: Component Image
               type: Service
               spec:
                 connectorRef: drcicd
-                image: harness/carsongee/tensorflow:<+pipeline.sequenceId>
+                image: harness/carsongee/tensorflow/component:<+pipeline.sequenceId>
           execution:
             steps:
               - step:
@@ -62,7 +62,9 @@ pipeline:
                     connectorRef: drcicd
                     image: harness/carsongee/tensorflow:<+pipeline.sequenceId>
                     shell: Bash
-                    command: pytest pytest --junitxml=testReport.xml
+                    command: |-
+                      find /
+                      pytest --junitxml=testReport.xml
                     reports:
                       type: JUnit
                       spec:
