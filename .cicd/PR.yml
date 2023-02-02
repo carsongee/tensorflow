@@ -25,9 +25,9 @@ pipeline:
                   identifier: BuildandPushtoECR_1
                   spec:
                     connectorRef: drcicd
-                    region: us-east-1
-                    account: 502474778139
-                    imageName: harness/carsongee/tensorflow/component
+                    region: us-east1
+                    account: "502474778139"
+                    imageName: harness/carsongee/tensorflow
                     tags:
                       - <+pipeline.sequenceId>
                     dockerfile: component/Dockerfile
