@@ -9,4 +9,4 @@ IS_FLAKY = True
 def test_flaky(param):
     assert param < 100_000
     if IS_FLAKY:
-        assert random.randint(0, 1_000)
+        assert random.randint(0, 1)
