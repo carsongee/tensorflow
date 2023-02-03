@@ -70,7 +70,7 @@ pipeline:
                         shell: Bash
                         command: |-
                           cd /code
-                          pytest -n 3 tests/unit --junitxml=/vol/harness/unitTestReport.xml
+                          pytest -n 3 tests/unit --junitxml=/harness/unitTestReport.xml
                         reports:
                           type: JUnit
                           spec:
@@ -86,7 +86,7 @@ pipeline:
                         shell: Bash
                         command: |-
                           cd /code
-                          pylint component tests --output-format=text,pylint_junit.JUnitReporter:/vol/harness/lintTestResult.xml
+                          pylint component tests --output-format=text,pylint_junit.JUnitReporter:/harness/lintTestResult.xml
                         reports:
                           type: JUnit
                           spec:
@@ -147,7 +147,7 @@ pipeline:
                     shell: Bash
                     command: |-
                       cd code
-                      pytest -n 3 tests/integration --junitxml=/vol/harness/integrationTestReport.xml
+                      pytest -n 3 tests/integration --junitxml=/harness/integrationTestReport.xml
                     reports:
                       type: JUnit
                       spec:
