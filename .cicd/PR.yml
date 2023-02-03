@@ -146,7 +146,7 @@ pipeline:
                     image: " 502474778139.dkr.ecr.us-east-1.amazonaws.com/harness/carsongee/tensorflow/component:<+pipeline.sequenceId>"
                     shell: Bash
                     command: |-
-                      cd code
+                      cd /code
                       pytest -n 3 tests/integration --junitxml=/harness/integrationTestReport.xml
                     reports:
                       type: JUnit
