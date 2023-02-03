@@ -100,6 +100,29 @@ pipeline:
             spec: {}
         variables: []
     - stage:
+        name: Phase 2 Approval
+        identifier: Phase_2_Approval
+        description: ""
+        type: Approval
+        spec:
+          execution:
+            steps:
+              - step:
+                  type: HarnessApproval
+                  name: Harness Approval_1
+                  identifier: HarnessApproval_1
+                  spec:
+                    approvalMessage: "Danger: Expensive Tests!"
+                    includePipelineExecutionHistory: true
+                    approvers:
+                      userGroups:
+                        - account._account_all_users
+                      minimumCount: 1
+                      disallowPipelineExecutor: false
+                    approverInputs: []
+                  timeout: 1d
+        tags: {}
+    - stage:
         name: Phase 2
         identifier: Phase_2
         description: ""
