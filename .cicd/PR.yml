@@ -25,12 +25,13 @@ pipeline:
                   identifier: BuildandPushtoECR_1
                   spec:
                     connectorRef: drcicd
-                    region: us-east1
+                    region: us-east-1
                     account: "502474778139"
-                    imageName: harness/carsongee/tensorflow
+                    imageName: harness/carsongee/tensorflow/component
                     tags:
                       - <+pipeline.sequenceId>
                     dockerfile: component/Dockerfile
+                    context: component/
           platform:
             os: Linux
             arch: Amd64
@@ -43,14 +44,7 @@ pipeline:
         description: ""
         type: CI
         spec:
-          cloneCodebase: true
-          serviceDependencies:
-            - identifier: Main_Image
-              name: Main Image
-              type: Service
-              spec:
-                connectorRef: drcicd
-                image: harness/carsongee/tensorflow:<+pipeline.sequenceId>
+          cloneCodebase: false
           execution:
             steps:
               - step:
@@ -59,9 +53,11 @@ pipeline:
                   identifier: Unit_Test
                   spec:
                     connectorRef: drcicd
-                    image: harness/carsongee/tensorflow:<+pipeline.sequenceId>
+                    image: 502474778139.dkr.ecr.us-east-1.amazonaws.com/harness/carsongee/tensorflow/component:<+pipeline.sequenceId>
                     shell: Bash
-                    command: pytest pytest --junitxml=testReport.xml
+                    command: |-
+                      cd /code
+                      pytest --junitxml=testReport.xml
                     reports:
                       type: JUnit
                       spec:
