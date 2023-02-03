@@ -13,7 +13,6 @@ pipeline:
     - stage:
         name: Build
         identifier: Build
-        description: ""
         type: CI
         spec:
           cloneCodebase: true
@@ -38,30 +37,139 @@ pipeline:
           runtime:
             type: Cloud
             spec: {}
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: Retry
+                spec:
+                  retryCount: 1
+                  onRetryFailure:
+                    action:
+                      type: Abort
+                  retryIntervals:
+                    - 1m
+        variables: []
     - stage:
-        name: Test
+        name: Phase 1
         identifier: Test
-        description: ""
         type: CI
         spec:
           cloneCodebase: false
           execution:
             steps:
+              - parallel:
+                  - step:
+                      type: Run
+                      name: Unit Test
+                      identifier: Unit_Test
+                      spec:
+                        connectorRef: drcicd
+                        image: 502474778139.dkr.ecr.us-east-1.amazonaws.com/harness/carsongee/tensorflow/component:<+pipeline.sequenceId>
+                        shell: Bash
+                        command: |-
+                          cd /code
+                          pytest -n 3 tests/unit --junitxml=testReport.xml
+                        reports:
+                          type: JUnit
+                          spec:
+                            paths:
+                              - testReport.xml
+                  - step:
+                      type: Run
+                      name: Lint
+                      identifier: Lint
+                      spec:
+                        connectorRef: drcicd
+                        image: 502474778139.dkr.ecr.us-east-1.amazonaws.com/harness/carsongee/tensorflow/component:<+pipeline.sequenceId>
+                        shell: Bash
+                        command: |-
+                          cd /code
+                          pylint component tests --output-format=text,pylint_junit.JUnitReporter:testResult.xml
+                        reports:
+                          type: JUnit
+                          spec:
+                            paths:
+                              - testResult.xml
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+        variables: []
+    - stage:
+        name: Stage 2 Approval
+        identifier: Stage_2_Approval
+        description: ""
+        type: Approval
+        spec:
+          execution:
+            steps:
+              - step:
+                  name: Phase2 Approval
+                  identifier: Phase2_Approval
+                  type: HarnessApproval
+                  timeout: 1d
+                  spec:
+                    approvalMessage: Are you ready for expensive tests?
+                    includePipelineExecutionHistory: true
+                    approvers:
+                      minimumCount: 1
+                      disallowPipelineExecutor: false
+                      userGroups:
+                        - account._account_all_users
+                    approverInputs: []
+        tags: {}
+    - stage:
+        name: Phase 2
+        identifier: Phase_2
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: false
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
               - step:
                   type: Run
-                  name: Unit Test
-                  identifier: Unit_Test
+                  name: Integration Tests
+                  identifier: Integration_Tests
                   spec:
                     connectorRef: drcicd
-                    image: 502474778139.dkr.ecr.us-east-1.amazonaws.com/harness/carsongee/tensorflow/component:<+pipeline.sequenceId>
+                    image: " 502474778139.dkr.ecr.us-east-1.amazonaws.com/harness/carsongee/tensorflow/component:<+pipeline.sequenceId>"
                     shell: Bash
                     command: |-
-                      cd /code
-                      pytest --junitxml=testReport.xml
+                      cd code
+                      pytest -n 3 tests/integration --junitxml=testReport.xml
                     reports:
                       type: JUnit
                       spec:
                         paths:
                           - testReport.xml
-          infrastructure:
-            useFromStage: Build
+  notificationRules:
+    - name: slack-firehose
+      identifier: slackfirehose
+      pipelineEvents:
+        - type: AllEvents
+        - type: PipelineStart
+        - type: PipelineEnd
+        - type: PipelineSuccess
+        - type: PipelineFailed
+        - type: PipelinePaused
+        - type: StageFailed
+        - type: StageSuccess
+        - type: StageStart
+        - type: StepFailed
+      notificationMethod:
+        type: Slack
+        spec:
+          userGroups: []
+          webhookUrl: https://hooks.slack.com/services/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
+      enabled: true
