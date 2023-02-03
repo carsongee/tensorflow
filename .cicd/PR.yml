@@ -44,14 +44,7 @@ pipeline:
         description: ""
         type: CI
         spec:
-          cloneCodebase: true
-          serviceDependencies:
-            - identifier: Main_Image
-              name: Component Image
-              type: Service
-              spec:
-                connectorRef: drcicd
-                image: 502474778139.dkr.ecr.us-east-1.amazonaws.com/harness/carsongee/tensorflow/component:<+pipeline.sequenceId>
+          cloneCodebase: false
           execution:
             steps:
               - step:
@@ -60,10 +53,10 @@ pipeline:
                   identifier: Unit_Test
                   spec:
                     connectorRef: drcicd
-                    image: harness/carsongee/tensorflow:<+pipeline.sequenceId>
+                    image: 502474778139.dkr.ecr.us-east-1.amazonaws.com/harness/carsongee/tensorflow/component:<+pipeline.sequenceId>
                     shell: Bash
                     command: |-
-                      find /
+                      cd /code
                       pytest --junitxml=testReport.xml
                     reports:
                       type: JUnit
