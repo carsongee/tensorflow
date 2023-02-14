@@ -1,0 +1,19 @@
+pipeline:
+  name: todd pr test
+  identifier: todd_pr_test
+  projectIdentifier: Tensorflow
+  orgIdentifier: default
+  tags: {}
+  stages:
+    - stage:
+        name: Component A
+        identifier: Component_A
+        description: ""
+        type: Pipeline
+        spec:
+          org: default
+          pipeline: ComponentAPR
+          project: Tensorflow
+          inputs: {}
+          outputs: []
+        tags: {}
