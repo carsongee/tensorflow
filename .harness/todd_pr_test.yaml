@@ -14,10 +14,7 @@ pipeline:
           org: default
           pipeline: todd_component_a_pr
           project: Tensorflow
-          inputs:
-            identifier: todd_component_a_pr
-            properties:
-              ci:
-                codebase:
-                  build: <+input>
+          inputSetReferences:
+            - componentainputset
+          outputs: []
         tags: {}
