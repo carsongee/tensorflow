@@ -1,0 +1,14 @@
+inputSet:
+  name: pr_input_set
+  identifier: pr_input_set
+  orgIdentifier: default
+  projectIdentifier: Tensorflow
+  pipeline:
+    identifier: PR
+    properties:
+      ci:
+        codebase:
+          build:
+            type: PR
+            spec:
+              number: <+trigger.prNumber>

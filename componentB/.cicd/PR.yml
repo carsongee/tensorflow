@@ -1,0 +1,134 @@
+pipeline:
+  name: PR
+  identifier: PR
+  projectIdentifier: Tensorflow
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: githubcg
+        build: <+input>
+  stages:
+    - stage:
+        name: Build
+        identifier: Build
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          execution:
+            steps:
+              - step:
+                  type: BuildAndPushECR
+                  name: Build and Push to ECR_1
+                  identifier: BuildandPushtoECR_1
+                  spec:
+                    connectorRef: drcicd
+                    region: us-east-1
+                    account: "502474778139"
+                    imageName: harness/carsongee/tensorflow/componentb
+                    tags:
+                      - <+pipeline.sequenceId>
+                    dockerfile: componentB/Dockerfile
+                    context: componentB/
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+    - stage:
+        name: Test
+        identifier: Test
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: false
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Unit Test
+                  identifier: Unit_Test
+                  spec:
+                    connectorRef: drcicd
+                    image: 502474778139.dkr.ecr.us-east-1.amazonaws.com/harness/carsongee/tensorflow/componentb:<+pipeline.sequenceId>
+                    shell: Bash
+                    command: |-
+                      cd /code
+                      pytest --junitxml=testReport.xml
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - testReport.xml
+          infrastructure:
+            useFromStage: Build
+pipeline:
+  name: PR
+  identifier: PR
+  projectIdentifier: Tensorflow
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: githubcg
+        build: <+input>
+  stages:
+    - stage:
+        name: Build
+        identifier: Build
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          execution:
+            steps:
+              - step:
+                  type: BuildAndPushECR
+                  name: Build and Push to ECR_1
+                  identifier: BuildandPushtoECR_1
+                  spec:
+                    connectorRef: drcicd
+                    region: us-east-1
+                    account: "502474778139"
+                    imageName: harness/carsongee/tensorflow/componentB
+                    tags:
+                      - <+pipeline.sequenceId>
+                    dockerfile: componentB/Dockerfile
+                    context: componentB/
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+    - stage:
+        name: Test
+        identifier: Test
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: false
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Unit Test
+                  identifier: Unit_Test
+                  spec:
+                    connectorRef: drcicd
+                    image: 502474778139.dkr.ecr.us-east-1.amazonaws.com/harness/carsongee/tensorflow/componentb:<+pipeline.sequenceId>
+                    shell: Bash
+                    command: |-
+                      cd /code
+                      pytest --junitxml=testReport.xml
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - testReport.xml
+          infrastructure:
+            useFromStage: Build
