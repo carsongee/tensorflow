@@ -1,0 +1,14 @@
+inputSet:
+  name: component-a-inputset
+  identifier: componentainputset
+  orgIdentifier: default
+  projectIdentifier: Tensorflow
+  pipeline:
+    identifier: todd_component_a_pr
+    properties:
+      ci:
+        codebase:
+          build:
+            type: branch
+            spec:
+              branch: povtesting
