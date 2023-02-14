@@ -1,6 +1,6 @@
 pipeline:
   name: ComponentB-PR
-  identifier: componentBPR
+  identifier: ComponentBPR
   projectIdentifier: Tensorflow
   orgIdentifier: default
   tags: {}
