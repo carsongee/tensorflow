@@ -50,7 +50,6 @@ pipeline:
                       type: Abort
                   retryIntervals:
                     - 1m
-        variables: []
     - stage:
         name: Phase 1
         identifier: Test
