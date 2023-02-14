@@ -20,7 +20,10 @@ pipeline:
                 properties:
                   ci:
                     codebase:
-                      build: <+input>
+                      build:
+                        type: PR
+                        spec:
+                          number: <+trigger.prNumber>
               outputs: []
         - stage:
             name: ComponentB
@@ -36,7 +39,10 @@ pipeline:
                 properties:
                   ci:
                     codebase:
-                      build: <+input>
+                      build:
+                        type: PR
+                        spec:
+                          number: <+trigger.prNumber>
               outputs: []
   notificationRules:
     - name: slack-firehose
