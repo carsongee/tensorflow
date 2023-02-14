@@ -172,3 +172,8 @@ pipeline:
           userGroups: []
           webhookUrl: https://hooks.slack.com/services/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
       enabled: true
+  variables:
+    - name: gitclone
+      type: String
+      description: ""
+      value: <+input>
