@@ -6,19 +6,18 @@ pipeline:
   tags: {}
   stages:
     - stage:
-        name: Component A
-        identifier: Component_A
+        name: component a
+        identifier: component_a
         description: ""
         type: Pipeline
         spec:
           org: default
-          pipeline: ComponentAPR
+          pipeline: todd_component_a_pr
           project: Tensorflow
-          inputs: {}
-          outputs: []
+          inputs:
+            identifier: todd_component_a_pr
+            properties:
+              ci:
+                codebase:
+                  build: <+input>
         tags: {}
-  properties:
-    ci:
-      codebase:
-        connectorRef: githubcg
-        build: <+input>
