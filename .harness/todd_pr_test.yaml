@@ -17,3 +17,8 @@ pipeline:
           inputs: {}
           outputs: []
         tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: githubcg
+        build: <+input>
