@@ -161,6 +161,21 @@ plugins = ["setuptools"]
 requirements-deprecated-finder = ["pip-api", "pipreqs"]
 
 [[package]]
+name = "junit-xml-2"
+version = "1.9"
+description = "Fork of https://github.com/kyrus/python-junit-xml that has tarball published to pypi"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "junit-xml-2-1.9.tar.gz", hash = "sha256:3b8d9635c5215f754c7807104f6493e3ea3bc9481e2d33db294560da3a1b00f7"},
+    {file = "junit_xml_2-1.9-py2.py3-none-any.whl", hash = "sha256:05093d75fe11120ccd51293884b5ee334ff3bc4b5106647c2bcc928486600588"},
+]
+
+[package.dependencies]
+six = "*"
+
+[[package]]
 name = "lazy-object-proxy"
 version = "1.9.0"
 description = "A fast and thorough lazy object proxy."
@@ -291,6 +306,21 @@ typing-extensions = {version = ">=3.10.0", markers = "python_version < \"3.10\""
 [package.extras]
 spelling = ["pyenchant (>=3.2,<4.0)"]
 testutils = ["gitpython (>3)"]
+
+[[package]]
+name = "pylint-junit"
+version = "0.3.2"
+description = "pylint reporter for junit format."
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pylint_junit-0.3.2.tar.gz", hash = "sha256:c6dbe956e55bb9b365d86e2ec77b58df6b95262b5515d187ac54b8359507174b"},
+]
+
+[package.dependencies]
+junit-xml-2 = "*"
+pylint = "*"
 
 [[package]]
 name = "pytest"
@@ -462,4 +492,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "f6b777fc2e30905803e6f1d1876827b5d5b6df36b3cf7ce10355b3279cb24894"
+content-hash = "ac5cd067e27fe69dc1aa33c0f9e8910d1d4b1f20fe6f930beac2d436a7de71ee"
