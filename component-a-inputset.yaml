@@ -1,5 +1,6 @@
 inputSet:
   name: component-a-inputset
+  tags: {}
   identifier: componentainputset
   orgIdentifier: default
   projectIdentifier: Tensorflow
@@ -11,4 +12,8 @@ inputSet:
           build:
             type: branch
             spec:
-              branch: povtesting
+              branch: <+pipeline.variables.gitclone>
+    variables:
+      - name: gitclone
+        type: String
+        value: carsongee/harness/monorepo
