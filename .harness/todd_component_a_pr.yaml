@@ -9,6 +9,7 @@ pipeline:
       codebase:
         connectorRef: githubcg
         build: <+input>
+        depth: 1
   stages:
     - stage:
         name: Build
