@@ -86,7 +86,7 @@ pipeline:
                           HARNESS_NODE_TOTAL: <+strategy.iterations>
                       failureStrategies: []
                       strategy:
-                        parallelism: 42
+                        parallelism: 4
                   - step:
                       type: Run
                       name: Lint
@@ -110,60 +110,6 @@ pipeline:
             type: Cloud
             spec: {}
         variables: []
-    - stage:
-        name: Phase 2 Approval
-        identifier: Phase_2_Approval
-        description: ""
-        type: Approval
-        spec:
-          execution:
-            steps:
-              - step:
-                  type: HarnessApproval
-                  name: Harness Approval_1
-                  identifier: HarnessApproval_1
-                  spec:
-                    approvalMessage: "Danger: Expensive Tests!"
-                    includePipelineExecutionHistory: true
-                    approvers:
-                      userGroups:
-                        - account._account_all_users
-                      minimumCount: 1
-                      disallowPipelineExecutor: false
-                    approverInputs: []
-                  timeout: 1d
-        tags: {}
-    - stage:
-        name: Phase 2
-        identifier: Phase_2
-        description: ""
-        type: CI
-        spec:
-          cloneCodebase: false
-          platform:
-            os: Linux
-            arch: Amd64
-          runtime:
-            type: Cloud
-            spec: {}
-          execution:
-            steps:
-              - step:
-                  type: Run
-                  name: Integration Tests
-                  identifier: Integration_Tests
-                  spec:
-                    connectorRef: drcicd
-                    image: " 502474778139.dkr.ecr.us-east-1.amazonaws.com/harness/carsongee/tensorflow/componentA:<+pipeline.sequenceId>"
-                    shell: Bash
-                    command: |-
-                      cd /code
-                      pytest -n 3 tests/integration --junitxml=/harness/integrationTestReport.xml
-                    reports:
-                      type: JUnit
-                      spec:
-                        paths:
-                          - integrationTestReport.xml
   notificationRules:
     - name: slack-firehose
       identifier: slackfirehose
