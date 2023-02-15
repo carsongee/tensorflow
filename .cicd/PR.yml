@@ -15,12 +15,8 @@ pipeline:
               org: default
               pipeline: ComponentAPR
               project: Tensorflow
-              inputs:
-                identifier: ComponentAPR
-                properties:
-                  ci:
-                    codebase:
-                      build: <+input>
+              inputSetReferences:
+                - pr_input_set
               outputs: []
         - stage:
             name: ComponentB
@@ -31,12 +27,8 @@ pipeline:
               org: default
               pipeline: ComponentBPR
               project: Tensorflow
-              inputs:
-                identifier: ComponentBPR
-                properties:
-                  ci:
-                    codebase:
-                      build: <+input>
+              inputSetReferences:
+                - pr_input_set
               outputs: []
   notificationRules:
     - name: slack-firehose
