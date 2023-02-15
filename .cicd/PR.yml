@@ -67,14 +67,26 @@ pipeline:
                         connectorRef: drcicd
                         image: 502474778139.dkr.ecr.us-east-1.amazonaws.com/harness/carsongee/tensorflow/componenta:<+pipeline.sequenceId>
                         shell: Bash
-                        command: |-
+                        command: |
                           cd /code
-                          pytest -n 3 tests/unit --junitxml=/harness/unitTestReport.xml
+                          FILES=`/addon/bin/split_tests --glob "tests/**/test_*.py" \  
+                              --split-by file_timing \  
+                              --split-index ${HARNESS_NODE_INDEX} \  
+                              --split-total ${HARNESS_NODE_TOTAL}`  
+                          echo $FILES  
+                          # Run tests with the test-groups string as input  
+                          pytest -n 15 --junitxml="/harness/result_<+strategy.iteration>.xml" $FILES
                         reports:
                           type: JUnit
                           spec:
                             paths:
-                              - unitTestReport.xml
+                              - result_<+strategy.iteration>.xml
+                        envVariables:
+                          HARNESS_NODE_INDEX: <+strategy.iteration>
+                          HARNESS_NODE_TOTAL: <+strategy.iterations>
+                      failureStrategies: []
+                      strategy:
+                        parallelism: 42
                   - step:
                       type: Run
                       name: Lint
