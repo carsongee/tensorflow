@@ -62,7 +62,7 @@ pipeline:
               - parallel:
                   - step:
                       type: Run
-                      name: Unit Test
+                      name: Unit Test 2
                       identifier: Unit_Test
                       spec:
                         connectorRef: drcicd
