@@ -68,7 +68,8 @@ pipeline:
                         image: 502474778139.dkr.ecr.us-east-1.amazonaws.com/harness/carsongee/tensorflow/componenta:<+pipeline.sequenceId>
                         shell: Bash
                         command: |
-                          find /
+                          ls /
+                          ls /harness
                           cd /code
                           FILES=`/addon/bin/split_tests --glob "tests/**/test_*.py" \  
                               --split-by file_timing \  
