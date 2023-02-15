@@ -69,7 +69,9 @@ pipeline:
                         shell: Bash
                         command: |
                           ls /
-                          ls /harness
+                          ls /addon
+                          ls /addon/bin/
+
                           cd /code
                           FILES=`/addon/bin/split_tests --glob "tests/**/test_*.py" \  
                               --split-by file_timing \  
