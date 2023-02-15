@@ -1,14 +1,36 @@
 inputSet:
   name: pr_input_set
+  tags: {}
   identifier: pr_input_set
   orgIdentifier: default
   projectIdentifier: Tensorflow
   pipeline:
     identifier: PR
-    properties:
-      ci:
-        codebase:
-          build:
-            type: PR
-            spec:
-              number: <+trigger.prNumber>
+    stages:
+      - parallel:
+          - stage:
+              identifier: ComponentA
+              type: Pipeline
+              spec:
+                inputs:
+                  identifier: ComponentAPR
+                  properties:
+                    ci:
+                      codebase:
+                        build:
+                          type: PR
+                          spec:
+                            number: <+trigger.prNumber>
+          - stage:
+              identifier: ComponentB
+              type: Pipeline
+              spec:
+                inputs:
+                  identifier: ComponentBPR
+                  properties:
+                    ci:
+                      codebase:
+                        build:
+                          type: PR
+                          spec:
+                            number: <+trigger.prNumber>
