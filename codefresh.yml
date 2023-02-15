@@ -4,9 +4,9 @@
 version: "1.0"
 # Stages can help you organize your steps in stages
 stages:
-  - "clone"
-  - "build"
-  - "test"
+  - "plan"
+  - "fanout"
+  - "report"
 
 steps:
   clone:
@@ -17,20 +17,48 @@ steps:
     # Learn more at codefresh.io/docs/docs/codefresh-yaml/variables/
     revision: "${{CF_BRANCH}}"
     git: "github-cg"
-    stage: "clone"
+    stage: "plan"
 
-  build:
-    title: "Building Docker image"
-    type: "build"
-    image_name: "carsongee/tensorflow/component"
-    working_directory: "${{clone}}/component"
-    tag: "${{CF_BRANCH_TAG_NORMALIZED}}"
-    dockerfile: "Dockerfile"
-    stage: "build"
+  # TODO: Make dynamic/custom step (or not...nesting is a thing...ask)
+  create_component_pipeline_a:
+    title: "Make ComponentA pipeline"
+    type: pipeline-trigger-merge
+    working_directory: "${{clone}}"
+    stage: "plan"
+    arguments:
+      SPEC: componentA/.cicd/codefresh.yml
+      TRIGGERS: componentA/.cicd/trigger.yml
+  create_component_pipeline_b:
+    title: "Make ComponentB pipeline"
+    type: pipeline-trigger-merge
+    working_directory: "${{clone}}"
+    stage: "plan"
+    arguments:
+      SPEC: componentB/.cicd/codefresh.yml
+      TRIGGERS: componentB/.cicd/trigger.yml
 
-  test:
-    title: "Running Tests"
-    stage: "test"
-    image: "${{build}}" # The image in which command will be executed
+  render_component_pipelines:
+    title: Render yaml suitable for triggering pipelines
+    type: datarobot/cg-component-pipelines
+    stage: "plan"
+    arguments:
+      COMPONENT_PIPELINES: tensorflow/componentA tensorflow/componentB
+      DESTINATION: ${{CF_VOLUME_PATH}}/pipelines.yaml
+      DEBUG: true
+
+  # TODO: Generate pipelines to run
+  run_cf_pipelines:
+    title: Start pipelines and wait
+    type: codefresh-run-dynamic
+    stage: fanout
+    working_directory: "${{clone}}"
+    arguments:
+      RUN_LIST_YAML_FILE: ${{CF_VOLUME_PATH}}/pipelines.yaml
+      WAIT: true
+
+  evaluate_pipelines:
+    image: alpine:latest
+    title: Checking pipelines worked
+    stage: "report"
     commands:
-      - "pytest"
+      - echo "Success!"

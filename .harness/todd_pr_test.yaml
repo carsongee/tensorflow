@@ -1,0 +1,55 @@
+pipeline:
+  name: todd pr test
+  identifier: todd_pr_test
+  projectIdentifier: Tensorflow
+  orgIdentifier: default
+  tags: {}
+  stages:
+    - stage:
+        name: Component A Pipeline Chaining
+        identifier: component_a
+        description: ""
+        type: Pipeline
+        spec:
+          org: default
+          pipeline: todd_component_a_pr
+          project: Tensorflow
+          inputSetReferences:
+            - componentainputset
+          outputs: []
+        tags: {}
+    - stage:
+        name: Component A Curl
+        identifier: Component_B
+        type: CI
+        spec:
+          cloneCodebase: false
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Trigger Component A with Curl
+                  identifier: Trigger_Component_A_with_Curl
+                  spec:
+                    shell: Sh
+                    command: |-
+                      curl -XPOST "https://app.harness.io/gateway/pipeline/api/pipeline/execute/todd_component_a_pr/inputSetList?accountIdentifier=<+account.identifier>&orgIdentifier=default&projectIdentifier=Tensorflow&moduleType=ci" \
+                      -H 'content-type: application/json' \
+                      -H "x-api-key: <+pipeline.variables.parson_demo_key_secret>" \
+                      -d '{ 
+                          "inputSetReferences": [ 
+                            "componentainputset" 
+                          ], 
+                          "withMergedPipelineYaml": true 
+                      }'
+  variables:
+    - name: parson_demo_key_secret
+      type: String
+      description: ""
+      value: <+secrets.getValue("parsonapikey")>

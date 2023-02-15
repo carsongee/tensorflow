@@ -4,64 +4,57 @@ pipeline:
   projectIdentifier: Tensorflow
   orgIdentifier: default
   tags: {}
-  properties:
-    ci:
-      codebase:
-        connectorRef: githubcg
-        build: <+input>
   stages:
-    - stage:
-        name: Build
-        identifier: Build
-        description: ""
-        type: CI
+    - parallel:
+        - stage:
+            name: ComponentA
+            identifier: ComponentA
+            description: ""
+            type: Pipeline
+            spec:
+              org: default
+              pipeline: ComponentAPR
+              project: Tensorflow
+              inputs:
+                identifier: ComponentAPR
+                properties:
+                  ci:
+                    codebase:
+                      build: <+input>
+              outputs: []
+        - stage:
+            name: ComponentB
+            identifier: ComponentB
+            description: ""
+            type: Pipeline
+            spec:
+              org: default
+              pipeline: ComponentBPR
+              project: Tensorflow
+              inputs:
+                identifier: ComponentBPR
+                properties:
+                  ci:
+                    codebase:
+                      build: <+input>
+              outputs: []
+  notificationRules:
+    - name: slack-firehose
+      identifier: slackfirehose
+      pipelineEvents:
+        - type: AllEvents
+        - type: PipelineStart
+        - type: PipelineEnd
+        - type: PipelineSuccess
+        - type: PipelineFailed
+        - type: PipelinePaused
+        - type: StageFailed
+        - type: StageSuccess
+        - type: StageStart
+        - type: StepFailed
+      notificationMethod:
+        type: Slack
         spec:
-          cloneCodebase: true
-          execution:
-            steps:
-              - step:
-                  type: BuildAndPushECR
-                  name: Build and Push to ECR_1
-                  identifier: BuildandPushtoECR_1
-                  spec:
-                    connectorRef: drcicd
-                    region: us-east-1
-                    account: "502474778139"
-                    imageName: harness/carsongee/tensorflow/component
-                    tags:
-                      - <+pipeline.sequenceId>
-                    dockerfile: component/Dockerfile
-                    context: component/
-          platform:
-            os: Linux
-            arch: Amd64
-          runtime:
-            type: Cloud
-            spec: {}
-    - stage:
-        name: Test
-        identifier: Test
-        description: ""
-        type: CI
-        spec:
-          cloneCodebase: false
-          execution:
-            steps:
-              - step:
-                  type: Run
-                  name: Unit Test
-                  identifier: Unit_Test
-                  spec:
-                    connectorRef: drcicd
-                    image: 502474778139.dkr.ecr.us-east-1.amazonaws.com/harness/carsongee/tensorflow/component:<+pipeline.sequenceId>
-                    shell: Bash
-                    command: |-
-                      cd /code
-                      pytest --junitxml=testReport.xml
-                    reports:
-                      type: JUnit
-                      spec:
-                        paths:
-                          - testReport.xml
-          infrastructure:
-            useFromStage: Build
+          userGroups: []
+          webhookUrl: https://hooks.slack.com/services/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
+      enabled: true
