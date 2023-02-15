@@ -1,0 +1,35 @@
+inputSet:
+  pipeline:
+    identifier: PR
+    stages:
+      - parallel:
+          - stage:
+              identifier: ComponentA
+              type: Pipeline
+              spec:
+                inputs:
+                  identifier: ComponentAPR
+                  properties:
+                    ci:
+                      codebase:
+                        build:
+                          type: PR
+                          spec:
+                            number: <+trigger.prNumber>
+          - stage:
+              identifier: ComponentB
+              type: Pipeline
+              spec:
+                inputs:
+                  identifier: ComponentBPR
+                  properties:
+                    ci:
+                      codebase:
+                        build:
+                          type: PR
+                          spec:
+                            number: <+trigger.prNumber>
+  name: todd_pr_input_set
+  identifier: todd_pr_input_set
+  orgIdentifier: default
+  projectIdentifier: Tensorflow
