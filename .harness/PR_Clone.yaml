@@ -1,0 +1,61 @@
+---
+pipeline:
+  projectIdentifier: "Tensorflow"
+  orgIdentifier: "default"
+  tags: {}
+  stages:
+  - parallel:
+    - stage:
+        name: "ComponentA"
+        identifier: "ComponentA"
+        description: ""
+        type: "Pipeline"
+        spec:
+          org: "default"
+          pipeline: "ComponentAPR"
+          project: "Tensorflow"
+          inputs:
+            identifier: "ComponentAPR"
+            properties:
+              ci:
+                codebase:
+                  build: "<+input>"
+          outputs: []
+    - stage:
+        name: "ComponentB"
+        identifier: "ComponentB"
+        description: ""
+        type: "Pipeline"
+        spec:
+          org: "default"
+          pipeline: "ComponentBPR"
+          project: "Tensorflow"
+          inputs:
+            identifier: "ComponentBPR"
+            properties:
+              ci:
+                codebase:
+                  build: "<+input>"
+          outputs: []
+  notificationRules:
+  - name: "slack-firehose"
+    identifier: "slackfirehose"
+    pipelineEvents:
+    - type: "AllEvents"
+    - type: "PipelineStart"
+    - type: "PipelineEnd"
+    - type: "PipelineSuccess"
+    - type: "PipelineFailed"
+    - type: "PipelinePaused"
+    - type: "StageFailed"
+    - type: "StageSuccess"
+    - type: "StageStart"
+    - type: "StepFailed"
+    notificationMethod:
+      type: "Slack"
+      spec:
+        userGroups: []
+        webhookUrl: "https://hooks.slack.com/services/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"
+    enabled: true
+  identifier: "PR_Clone"
+  name: "PR - Clone"
