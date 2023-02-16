@@ -69,11 +69,11 @@ pipeline:
                         shell: Bash
                         command: |
                           ls /
-                          ls /addon
-                          ls /addon/bin/
+                          ls /harness
+                          ls /harness/ci-addon
 
                           cd /code
-                          FILES=`/addon/bin/split_tests --glob "tests/**/test_*.py" \  
+                          FILES=`/usr/local/bin/split_tests --glob "tests/**/test_*.py" \  
                               --split-by file_timing \  
                               --split-index ${HARNESS_NODE_INDEX} \  
                               --split-total ${HARNESS_NODE_TOTAL}`  
