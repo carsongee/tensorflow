@@ -1,136 +1,133 @@
----
 pipeline:
-  projectIdentifier: "Tensorflow"
-  orgIdentifier: "default"
+  projectIdentifier: Tensorflow
+  orgIdentifier: default
   tags: {}
   properties:
     ci:
       codebase:
-        connectorRef: "githubcg"
-        build: "<+input>"
+        connectorRef: githubcg
+        build: <+input>
   stages:
-  - stage:
-      name: "Build"
-      identifier: "Build"
-      type: "CI"
-      spec:
-        cloneCodebase: true
-        execution:
-          steps:
-          - parallel:
-            - step:
-                type: "BuildAndPushECR"
-                name: "Build and Push to ECR_1"
-                identifier: "BuildandPushtoECR_1"
+    - stage:
+        name: Build
+        identifier: Build
+        type: CI
+        spec:
+          cloneCodebase: true
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Copy Splits
+                  identifier: Copy_Splits
+                  spec:
+                    shell: Sh
+                    command: |-
+                      ls -la /usr/bin
+                      ls -la /usr/local
+                      ls -la /usr/local/bin
+                      echo $PATH
+                      mkdir /harness/bin || true
+                      cp $(which test_splits) /harness/bin
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: Retry
                 spec:
-                  connectorRef: "drcicd"
-                  region: "us-east-1"
-                  account: "502474778139"
-                  imageName: "harness/carsongee/tensorflow/componenta"
-                  tags:
-                  - "<+pipeline.sequenceId>"
-                  dockerfile: "componentA/Dockerfile"
-                  context: "componentA/"
-            - step:
-                type: "Run"
-                name: "Copy Splits"
-                identifier: "Copy_Splits"
-                spec:
-                  shell: "Sh"
-                  command: "mkdir /harness/bin || true\ncp $(which test_splits) /harness/bin"
-        platform:
-          os: "Linux"
-          arch: "Amd64"
-        runtime:
-          type: "Cloud"
-          spec: {}
-      failureStrategies:
-      - onFailure:
-          errors:
-          - "AllErrors"
-          action:
-            type: "Retry"
-            spec:
-              retryCount: 1
-              onRetryFailure:
-                action:
-                  type: "Abort"
-              retryIntervals:
-              - "1m"
-  - stage:
-      name: "Phase 1"
-      identifier: "Test"
-      type: "CI"
-      spec:
-        cloneCodebase: false
-        execution:
-          steps:
-          - parallel:
-            - step:
-                type: "Run"
-                name: "Unit Test"
-                identifier: "Unit_Test"
-                spec:
-                  connectorRef: "drcicd"
-                  image: "502474778139.dkr.ecr.us-east-1.amazonaws.com/harness/carsongee/tensorflow/componenta:<+pipeline.sequenceId>"
-                  shell: "Bash"
-                  command: "cd /code\n# split_tests copied in earlier stage\nFILES=`/harness/bin/split_tests\
-                    \ --glob \"tests/**/test_*.py\" \\  \n    --split-by file_timing\
-                    \ \\  \n    --split-index ${HARNESS_NODE_INDEX} \\  \n    --split-total\
-                    \ ${HARNESS_NODE_TOTAL}`  \necho $FILES  \n# Run tests with the\
-                    \ test-groups string as input  \npytest -n 15 --junitxml=\"/harness/result_<+strategy.iteration>.xml\"\
-                    \ $FILES\n"
-                  reports:
-                    type: "JUnit"
-                    spec:
-                      paths:
-                      - "result_<+strategy.iteration>.xml"
-                  envVariables:
-                    HARNESS_NODE_INDEX: "<+strategy.iteration>"
-                    HARNESS_NODE_TOTAL: "<+strategy.iterations>"
-                failureStrategies: []
-                strategy:
-                  parallelism: 4
-            - step:
-                type: "Run"
-                name: "Lint"
-                identifier: "Lint"
-                spec:
-                  connectorRef: "drcicd"
-                  image: "502474778139.dkr.ecr.us-east-1.amazonaws.com/harness/carsongee/tensorflow/componenta:<+pipeline.sequenceId>"
-                  shell: "Bash"
-                  command: "cd /code\npylint component tests --output-format=text,pylint_junit.JUnitReporter:/harness/lintTestResult.xml"
-                  reports:
-                    type: "JUnit"
-                    spec:
-                      paths:
-                      - "lintTestResult.xml"
-        platform:
-          os: "Linux"
-          arch: "Amd64"
-        runtime:
-          type: "Cloud"
-          spec: {}
-      variables: []
+                  retryCount: 1
+                  onRetryFailure:
+                    action:
+                      type: Abort
+                  retryIntervals:
+                    - 1m
+    - stage:
+        name: Phase 1
+        identifier: Test
+        type: CI
+        spec:
+          cloneCodebase: false
+          execution:
+            steps:
+              - parallel:
+                  - step:
+                      type: Run
+                      name: Unit Test
+                      identifier: Unit_Test
+                      spec:
+                        connectorRef: drcicd
+                        image: 502474778139.dkr.ecr.us-east-1.amazonaws.com/harness/carsongee/tensorflow/componenta:<+pipeline.sequenceId>
+                        shell: Bash
+                        command: |
+                          cd /code
+                          # split_tests copied in earlier stage
+                          FILES=`/harness/bin/split_tests --glob "tests/**/test_*.py" \  
+                              --split-by file_timing \  
+                              --split-index ${HARNESS_NODE_INDEX} \  
+                              --split-total ${HARNESS_NODE_TOTAL}`  
+                          echo $FILES  
+                          # Run tests with the test-groups string as input  
+                          pytest -n 15 --junitxml="/harness/result_<+strategy.iteration>.xml" $FILES
+                        reports:
+                          type: JUnit
+                          spec:
+                            paths:
+                              - result_<+strategy.iteration>.xml
+                        envVariables:
+                          HARNESS_NODE_INDEX: <+strategy.iteration>
+                          HARNESS_NODE_TOTAL: <+strategy.iterations>
+                      failureStrategies: []
+                      strategy:
+                        parallelism: 4
+                  - step:
+                      type: Run
+                      name: Lint
+                      identifier: Lint
+                      spec:
+                        connectorRef: drcicd
+                        image: 502474778139.dkr.ecr.us-east-1.amazonaws.com/harness/carsongee/tensorflow/componenta:<+pipeline.sequenceId>
+                        shell: Bash
+                        command: |-
+                          cd /code
+                          pylint component tests --output-format=text,pylint_junit.JUnitReporter:/harness/lintTestResult.xml
+                        reports:
+                          type: JUnit
+                          spec:
+                            paths:
+                              - lintTestResult.xml
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+        variables: []
   notificationRules:
-  - name: "slack-firehose"
-    identifier: "slackfirehose"
-    pipelineEvents:
-    - type: "AllEvents"
-    - type: "PipelineStart"
-    - type: "PipelineEnd"
-    - type: "PipelineSuccess"
-    - type: "PipelineFailed"
-    - type: "PipelinePaused"
-    - type: "StageFailed"
-    - type: "StageSuccess"
-    - type: "StageStart"
-    - type: "StepFailed"
-    notificationMethod:
-      type: "Slack"
-      spec:
-        userGroups: []
-        webhookUrl: "https://hooks.slack.com/services/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"
-    enabled: true
-  identifier: "PR_Clone"
-  name: "PR - Clone"
+    - name: slack-firehose
+      identifier: slackfirehose
+      pipelineEvents:
+        - type: AllEvents
+        - type: PipelineStart
+        - type: PipelineEnd
+        - type: PipelineSuccess
+        - type: PipelineFailed
+        - type: PipelinePaused
+        - type: StageFailed
+        - type: StageSuccess
+        - type: StageStart
+        - type: StepFailed
+      notificationMethod:
+        type: Slack
+        spec:
+          userGroups: []
+          webhookUrl: https://hooks.slack.com/services/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
+      enabled: true
+  identifier: PR_Clone
+  name: PR - Clone
