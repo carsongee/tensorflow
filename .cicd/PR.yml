@@ -79,10 +79,7 @@ pipeline:
                         command: |
                           cd /code
                           # split_tests copied in earlier stage
-                          FILES=`/harness/bin/split_tests --glob "tests/**/test_*.py" \  
-                              --split-by file_timing \  
-                              --split-index ${HARNESS_NODE_INDEX} \  
-                              --split-total ${HARNESS_NODE_TOTAL}`  
+                          FILES=`/harness/bin/split_tests --glob "tests/**/test_*.py" --split-by file_timing --split-index ${HARNESS_NODE_INDEX} --split-total ${HARNESS_NODE_TOTAL}`  
                           echo $FILES  
                           # Run tests with the test-groups string as input  
                           pytest -n 15 --junitxml="/harness/result_<+strategy.iteration>.xml" $FILES
