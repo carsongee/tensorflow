@@ -19,6 +19,15 @@ pipeline:
           execution:
             steps:
               - step:
+                  type: Run
+                  name: Copy Splits
+                  identifier: Copy_Splits
+                  spec:
+                    shell: Sh
+                    command: |-
+                      mkdir /harness/bin
+                      cp $(which test_splits) /harness/bin
+              - step:
                   type: BuildAndPushECR
                   name: Build and Push to ECR_1
                   identifier: BuildandPushtoECR_1
