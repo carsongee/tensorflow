@@ -39,7 +39,7 @@ pipeline:
                       spec:
                         shell: Sh
                         command: |-
-                          mkdir /harness/bin
+                          mkdir /harness/bin || true
                           cp $(which test_splits) /harness/bin
           platform:
             os: Linux
@@ -79,8 +79,8 @@ pipeline:
                         shell: Bash
                         command: |
                           cd /code
-                          find / -name split_tests
-                          FILES=`split_tests --glob "tests/**/test_*.py" \  
+                          # split_tests copied in earlier stage
+                          FILES=`/harness/bin/split_tests --glob "tests/**/test_*.py" \  
                               --split-by file_timing \  
                               --split-index ${HARNESS_NODE_INDEX} \  
                               --split-total ${HARNESS_NODE_TOTAL}`  
