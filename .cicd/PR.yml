@@ -18,28 +18,29 @@ pipeline:
           cloneCodebase: true
           execution:
             steps:
-              - step:
-                  type: Run
-                  name: Copy Splits
-                  identifier: Copy_Splits
-                  spec:
-                    shell: Sh
-                    command: |-
-                      mkdir /harness/bin
-                      cp $(which test_splits) /harness/bin
-              - step:
-                  type: BuildAndPushECR
-                  name: Build and Push to ECR_1
-                  identifier: BuildandPushtoECR_1
-                  spec:
-                    connectorRef: drcicd
-                    region: us-east-1
-                    account: "502474778139"
-                    imageName: harness/carsongee/tensorflow/componenta
-                    tags:
-                      - <+pipeline.sequenceId>
-                    dockerfile: componentA/Dockerfile
-                    context: componentA/
+              - parallel:
+                  - step:
+                      type: BuildAndPushECR
+                      name: Build and Push to ECR_1
+                      identifier: BuildandPushtoECR_1
+                      spec:
+                        connectorRef: drcicd
+                        region: us-east-1
+                        account: "502474778139"
+                        imageName: harness/carsongee/tensorflow/componenta
+                        tags:
+                          - <+pipeline.sequenceId>
+                        dockerfile: componentA/Dockerfile
+                        context: componentA/
+                  - step:
+                      type: Run
+                      name: Copy Splits
+                      identifier: Copy_Splits
+                      spec:
+                        shell: Sh
+                        command: |-
+                          mkdir /harness/bin
+                          cp $(which test_splits) /harness/bin
           platform:
             os: Linux
             arch: Amd64
