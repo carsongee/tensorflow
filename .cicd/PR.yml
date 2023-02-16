@@ -18,29 +18,19 @@ pipeline:
           cloneCodebase: true
           execution:
             steps:
-              - parallel:
-                  - step:
-                      type: BuildAndPushECR
-                      name: Build and Push to ECR_1
-                      identifier: BuildandPushtoECR_1
-                      spec:
-                        connectorRef: drcicd
-                        region: us-east-1
-                        account: "502474778139"
-                        imageName: harness/carsongee/tensorflow/componenta
-                        tags:
-                          - <+pipeline.sequenceId>
-                        dockerfile: componentA/Dockerfile
-                        context: componentA/
-                  - step:
-                      type: Run
-                      name: Copy Splits
-                      identifier: Copy_Splits
-                      spec:
-                        shell: Bash
-                        command: |-
-                          mkdir /harness/bin || true
-                          cp $(which split_tests) /harness/bin
+              - step:
+                  type: BuildAndPushECR
+                  name: Build and Push to ECR_1
+                  identifier: BuildandPushtoECR_1
+                  spec:
+                    connectorRef: drcicd
+                    region: us-east-1
+                    account: "502474778139"
+                    imageName: harness/carsongee/tensorflow/componenta
+                    tags:
+                      - <+pipeline.sequenceId>
+                    dockerfile: componentA/Dockerfile
+                    context: componentA/
           platform:
             os: Linux
             arch: Amd64
@@ -68,6 +58,15 @@ pipeline:
           cloneCodebase: false
           execution:
             steps:
+              - step:
+                  type: Run
+                  name: Copy Splits
+                  identifier: Copy_Splits
+                  spec:
+                    shell: Bash
+                    command: |-
+                      mkdir /harness/bin || true
+                      cp $(which split_tests) /harness/bin
               - parallel:
                   - step:
                       type: Run
