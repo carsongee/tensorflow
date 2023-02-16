@@ -2,18 +2,13 @@ pipeline:
   projectIdentifier: Tensorflow
   orgIdentifier: default
   tags: {}
-  properties:
-    ci:
-      codebase:
-        connectorRef: githubcg
-        build: <+input>
   stages:
     - stage:
         name: Build
         identifier: Build
         type: CI
         spec:
-          cloneCodebase: true
+          cloneCodebase: false
           execution:
             steps:
               - step:
@@ -28,7 +23,7 @@ pipeline:
                       ls -la /usr/local/bin
                       echo $PATH
                       mkdir /harness/bin || true
-                      cp $(which test_splits) /harness/bin
+                      cp $(which split_tests) /harness/bin
           platform:
             os: Linux
             arch: Amd64
