@@ -37,10 +37,10 @@ pipeline:
                       name: Copy Splits
                       identifier: Copy_Splits
                       spec:
-                        shell: Sh
+                        shell: Bash
                         command: |-
                           mkdir /harness/bin || true
-                          cp $(which test_splits) /harness/bin
+                          cp $(which split_tests) /harness/bin
           platform:
             os: Linux
             arch: Amd64
