@@ -69,7 +69,8 @@ pipeline:
                         shell: Bash
                         command: |
                           cd /code
-                          FILES=`/usr/local/bin/split_tests --glob "tests/**/test_*.py" \  
+                          which split_tests
+                          FILES=`split_tests --glob "tests/**/test_*.py" \  
                               --split-by file_timing \  
                               --split-index ${HARNESS_NODE_INDEX} \  
                               --split-total ${HARNESS_NODE_TOTAL}`  
