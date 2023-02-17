@@ -67,6 +67,17 @@ pipeline:
                     command: |-
                       mkdir /harness/bin || true
                       cp $(which split_tests) /harness/bin
+              - step:
+                  type: Run
+                  name: Calculate Splits
+                  identifier: calculate_splits
+                  spec:
+                    connectorRef: drcicd
+                    image: 502474778139.dkr.ecr.us-east-1.amazonaws.com/harness/carsongee/tensorflow/componenta:<+pipeline.sequenceId>
+                    shell: Bash
+                    command: export NUM_SPLITS=$(find /code/tests/unit)
+                    outputVariables:
+                      - name: NUM_SPLITS
               - parallel:
                   - step:
                       type: Run
@@ -93,7 +104,7 @@ pipeline:
                           HARNESS_NODE_TOTAL: <+strategy.iterations>
                       failureStrategies: []
                       strategy:
-                        parallelism: 4
+                        parallelism: <+calculate_splits.output.outputVariables.NUM_SPLITS>
                   - step:
                       type: Run
                       name: Lint
