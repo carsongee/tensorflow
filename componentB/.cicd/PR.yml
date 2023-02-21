@@ -31,12 +31,14 @@ pipeline:
                       - <+pipeline.sequenceId>
                     dockerfile: componentB/Dockerfile
                     context: componentB/
-          platform:
-            os: Linux
-            arch: Amd64
-          runtime:
-            type: Cloud
-            spec: {}
+          infrastructure:
+            type: KubernetesDirect
+            spec:
+              connectorRef: cgmac
+              namespace: default
+              automountServiceAccountToken: true
+              nodeSelector: {}
+              os: Linux
         failureStrategies:
           - onFailure:
               errors:
