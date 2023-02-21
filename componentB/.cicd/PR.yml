@@ -34,7 +34,7 @@ pipeline:
           infrastructure:
             type: KubernetesDirect
             spec:
-              connectorRef: cgmac
+              connectorRef: apolyakovtest
               namespace: default
               automountServiceAccountToken: true
               nodeSelector: {}
