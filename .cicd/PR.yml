@@ -146,5 +146,5 @@ pipeline:
         type: Slack
         spec:
           userGroups: []
-          webhookUrl: https://hooks.slack.com/services/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
+          webhookUrl: https://hooks.slack.com/services/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
       enabled: true
