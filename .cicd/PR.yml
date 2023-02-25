@@ -104,7 +104,7 @@ pipeline:
                           HARNESS_NODE_TOTAL: <+strategy.iterations>
                       failureStrategies: []
                       strategy:
-                        parallelism: <+calculate_splits.output.outputVariables.NUM_SPLITS>
+                        parallelism: 2
                   - step:
                       type: Run
                       name: Lint
