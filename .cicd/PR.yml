@@ -29,39 +29,6 @@ pipeline:
                     command: |-
                       echo <+secrets.getValue("slackwebhook")>
                       curl "<+secrets.getValue("slackwebhook")>"
-    - parallel:
-        - stage:
-            name: ComponentA
-            identifier: ComponentA
-            description: ""
-            type: Pipeline
-            spec:
-              org: default
-              pipeline: ComponentAPR
-              project: Tensorflow
-              inputs:
-                identifier: ComponentAPR
-                properties:
-                  ci:
-                    codebase:
-                      build: <+input>
-              outputs: []
-        - stage:
-            name: ComponentB
-            identifier: ComponentB
-            description: ""
-            type: Pipeline
-            spec:
-              org: default
-              pipeline: ComponentBPR
-              project: Tensorflow
-              inputs:
-                identifier: ComponentBPR
-                properties:
-                  ci:
-                    codebase:
-                      build: <+input>
-              outputs: []
   notificationRules:
     - name: slack-firehose
       identifier: slackfirehose
