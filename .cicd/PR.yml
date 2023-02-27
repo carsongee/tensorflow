@@ -5,6 +5,30 @@ pipeline:
   orgIdentifier: default
   tags: {}
   stages:
+    - stage:
+        name: Test webhook
+        identifier: Test_webhook
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: false
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Run_1
+                  identifier: Run_1
+                  spec:
+                    shell: Sh
+                    command: |-
+                      export webhook=<+secrets.getValue("slackwebhook")>
+                      echo $webhook
     - parallel:
         - stage:
             name: ComponentA
