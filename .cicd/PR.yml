@@ -27,9 +27,12 @@ pipeline:
                   spec:
                     shell: Sh
                     command: |-
-                      echo <+secrets.getValue("slackwebhook")>
+                      echo <+secrets.getValue("slackwebhook")> > base64 -d > /tmp/file.txt
+                      cat /tmp/file.txt
 
-                      curl -X POST -H 'Content-type: application/json' --data '{"test":"Hello World!"}' <+secrets.getValue("slackwebhook")>
+                      curl -H "Content-type: application/json" \
+                      --data '{"test":"Hello World"}' \
+                      -X POST <+secrets.getValue("slackwebhook")>
   notificationRules:
     - name: slack-firehose
       identifier: slackfirehose
