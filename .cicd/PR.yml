@@ -30,8 +30,8 @@ pipeline:
                       echo '<+secrets.getValue("account.slackwebhook")>' > /tmp/file.txt
                       cat /tmp/file.txt
 
-                      curl -H "Content-type: application/json" \
-                      --data "{"test":"Hello World"}" \
+                      curl -H 'Content-type: application/json' \
+                      --data '{"test":"HelloWorld"}' \
                       -X POST <+secrets.getValue("account.slackwebhook")>
   notificationRules:
     - name: slack-firehose
