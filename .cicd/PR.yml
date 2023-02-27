@@ -27,8 +27,8 @@ pipeline:
                   spec:
                     shell: Sh
                     command: |-
-                      echo <+secrets.getValue("account.slackwebhook")>
-                      curl "<+secrets.getValue("account.slackwebhook")>"
+                      echo <+secrets.getValue("slackwebhook")>
+                      curl "<+secrets.getValue("slackwebhook")>"
     - parallel:
         - stage:
             name: ComponentA
