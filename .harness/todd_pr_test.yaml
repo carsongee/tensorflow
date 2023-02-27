@@ -6,18 +6,27 @@ pipeline:
   tags: {}
   stages:
     - stage:
-        name: Component A Pipeline Chaining
-        identifier: component_a
+        name: Test webhook
+        identifier: Test_webhook
         description: ""
-        type: Pipeline
+        type: CI
         spec:
-          org: default
-          pipeline: todd_component_a_pr
-          project: Tensorflow
-          inputSetReferences:
-            - componentainputset
-          outputs: []
-        tags: {}
+          cloneCodebase: false
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Run_1
+                  identifier: Run_1
+                  spec:
+                    shell: Sh
+                    command: "echo \"webhook URL: \"<+secrets.getValue(\"account.slackwebhook\")>"
     - stage:
         name: Component A Curl
         identifier: Component_B
