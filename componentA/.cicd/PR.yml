@@ -85,7 +85,7 @@ pipeline:
                         shell: Bash
                         command: |-
                           cd /code
-                          pylint componentA tests --output-format=text,pylint_junit.JUnitReporter:/harness/lintTestResult.xml
+                          pylint component tests --output-format=text,pylint_junit.JUnitReporter:/harness/lintTestResult.xml
                         reports:
                           type: JUnit
                           spec:
