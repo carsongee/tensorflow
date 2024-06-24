@@ -4,7 +4,7 @@
 version: "1.0"
 # Stages can help you organize your steps in stages
 stages:
-  - "plan"
+  - "clone"
   - "fanout"
   - "report"
 
@@ -17,44 +17,19 @@ steps:
     # Learn more at codefresh.io/docs/docs/codefresh-yaml/variables/
     revision: "${{CF_BRANCH}}"
     git: "github-cg"
-    stage: "plan"
+    stage: "clone"
 
-  # TODO: Make dynamic/custom step (or not...nesting is a thing...ask)
-  create_component_pipeline_a:
-    title: "Make ComponentA pipeline"
-    type: pipeline-trigger-merge
-    working_directory: "${{clone}}"
-    stage: "plan"
+  run_components:
+    title: Build and Run Component Pipelines
+    type: datarobot/cg-components
+    stage: "fanout"
     arguments:
-      SPEC: componentA/.cicd/codefresh.yml
-      TRIGGERS: componentA/.cicd/trigger.yml
-  create_component_pipeline_b:
-    title: "Make ComponentB pipeline"
-    type: pipeline-trigger-merge
-    working_directory: "${{clone}}"
-    stage: "plan"
-    arguments:
-      SPEC: componentB/.cicd/codefresh.yml
-      TRIGGERS: componentB/.cicd/trigger.yml
-
-  render_component_pipelines:
-    title: Render yaml suitable for triggering pipelines
-    type: datarobot/cg-component-pipelines
-    stage: "plan"
-    arguments:
-      COMPONENT_PIPELINES: tensorflow/componentA tensorflow/componentB
-      DESTINATION: ${{CF_VOLUME_PATH}}/pipelines.yaml
+      components:
+        - componentA
+        - componentB
+      yaml_destination: ${{CF_VOLUME_PATH}}/pipelines.yaml
+      project: tensorflow
       DEBUG: true
-
-  # TODO: Generate pipelines to run
-  run_cf_pipelines:
-    title: Start pipelines and wait
-    type: codefresh-run-dynamic
-    stage: fanout
-    working_directory: "${{clone}}"
-    arguments:
-      RUN_LIST_YAML_FILE: ${{CF_VOLUME_PATH}}/pipelines.yaml
-      WAIT: true
 
   evaluate_pipelines:
     image: alpine:latest
